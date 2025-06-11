@@ -13,7 +13,7 @@ app.use(bodyParser.json());
 
 app.use(cors());
 
-app.use(bodyParser.raw({ type: "application/json" }));
+// app.use(bodyParser.raw({ type: "application/json" }));
 
 const CONNECTED_ACCOUNT_ID = "acct_1RSCgTRhwk3BcY4W";
 
@@ -56,7 +56,8 @@ app.post("/create-checkout-session", async (req, res) => {
   }
 });
 
-app.post("/webhook", (req, res) => {
+// Use raw body only for webhook route
+app.post("/webhook", bodyParser.raw({ type: "application/json" }), (req, res) => {
   const sig = req.headers["stripe-signature"];
 
   let event;

@@ -2,6 +2,8 @@ import React from "react";
 import { User, BookOpen, MessageCircle } from "lucide-react";
 
 const MainContent: React.FC = () => {
+  console.log(import.meta.env.VITE_APP_BACKEND_URL);
+  
   return (
     <div className="flex-1 p-6 overflow-auto">
       <header className="mb-8 flex items-center justify-between">
@@ -16,11 +18,15 @@ const MainContent: React.FC = () => {
         <button
           className="px-3 py-1.5 rounded-lg bg-navy-700 text-white cursor-pointer transition transform active:scale-90"
           onClick={async () => {
-            
-            
-            const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/create-checkout-session`, {
-              method: "POST",
-            });
+
+            const res = await fetch(
+              `${import.meta.env.VITE_APP_BACKEND_URL}/create-checkout-session`,
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({}),
+              }
+            );
             const data = await res.json();
             if (data.url) {
               window.location.href = data.url;
