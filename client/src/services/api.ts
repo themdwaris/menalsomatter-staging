@@ -3,9 +3,11 @@ import { RaffleEntry, RaffleStatus } from '../types';
 // Mock user ID - in a real app, this would come from authentication
 const MOCK_USER_ID = '123';
 
+const BASE_URL=import.meta.env.VITE_APP_BACKEND_URL || 'http://localhost:3000'
+
 export const fetchRaffleStatus = async (): Promise<RaffleStatus> => {
   try {
-    const response = await fetch(`/api/raffle-status?userId=${MOCK_USER_ID}`);
+    const response = await fetch(`${BASE_URL}/api/raffle-status?userId=${MOCK_USER_ID}`);
     
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -25,7 +27,7 @@ export const fetchRaffleStatus = async (): Promise<RaffleStatus> => {
 
 export const submitRaffleEntry = async (): Promise<RaffleEntry> => {
   try {
-    const response = await fetch('/api/raffle-entry', {
+    const response = await fetch(`${BASE_URL}/api/raffle-entry`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
