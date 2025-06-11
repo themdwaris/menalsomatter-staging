@@ -57,33 +57,62 @@ app.post("/create-checkout-session", async (req, res) => {
 });
 
 // Use raw body only for webhook route
-app.post("/webhook", bodyParser.raw({ type: "application/json" }), (req, res) => {
-  const sig = req.headers["stripe-signature"];
+app.post(
+  "/webhook",
+  bodyParser.raw({ type: "application/json" }),
+  (req, res) => {
+    const sig = req.headers["stripe-signature"];
 
-  let event;
-  try {
-    event = stripe.webhooks.constructEvent(
-      req.body,
-      sig,
-      process.env.STRIPE_WEBHOOK_SECRET
-    );
-  } catch (err) {
-    console.error("❌ Webhook signature verification failed:", err.message);
-    return res.status(400).send(`Webhook Error: ${err.message}`);
-  }
+    let event;
+    try {
+      event = stripe.webhooks.constructEvent(
+        req.body,
+        sig,
+        process.env.STRIPE_WEBHOOK_SECRET
+      );
+    } catch (err) {
+      console.error("❌ Webhook signature verification failed:", err.message);
+      return res.status(400).send(`Webhook Error: ${err.message}`);
+    }
 
-  switch (event.type) {
-    case "checkout.session.completed":
-      console.log("✅ Donation successful! Session ID:", event.data.object.id);
-      break;
-    case "payment_intent.payment_failed":
-      console.log("❌ Payment failed.");
-      break;
-    default:
-      console.log(`ℹ️ Unhandled event type: ${event.type}`);
+    let userTickets = {};
+
+    app.get("/api/raffle-status", (req, res) => {
+      const userId = req.query.userId;
+      if (!userId)
+        return res.status(400).json({ error: "User ID is required" });
+
+      const tickets = userTickets[userId] || 0;
+      res.json({ tickets });
+    });
+
+    app.post("/api/raffle-entry", (req, res) => {
+      const { userId } = req.body;
+      if (!userId)
+        return res
+          .status(400)
+          .json({ success: false, error: "User ID missing" });
+
+      userTickets[userId] = (userTickets[userId] || 0) + 1;
+      res.json({ success: true, tickets: userTickets[userId] });
+    });
+
+    switch (event.type) {
+      case "checkout.session.completed":
+        console.log(
+          "✅ Donation successful! Session ID:",
+          event.data.object.id
+        );
+        break;
+      case "payment_intent.payment_failed":
+        console.log("❌ Payment failed.");
+        break;
+      default:
+        console.log(`ℹ️ Unhandled event type: ${event.type}`);
+    }
+    res.send();
   }
-  res.send();
-});
+);
 
 app.listen(3000, () =>
   console.log("🚀 Server running on http://localhost:3000")
