@@ -21,6 +21,24 @@ app.get("/", async (req, res) => {
   return res.json({ message: "Hello from backend" });
 });
 
+let userTickets = {};
+
+app.get("/api/raffle-status", (req, res) => {
+  const userId = req.query.userId;
+  if (!userId) return res.status(400).json({ error: "User ID is required" });
+  const tickets = userTickets[userId] || 0;
+  res.json({ tickets });
+});
+
+app.post("/api/raffle-entry", (req, res) => {
+  const { userId } = req.body;
+  if (!userId) return res.status(400).json({ success: false, error: "User ID missing" });
+
+  userTickets[userId] = (userTickets[userId] || 0) + 1;
+  return res.json({ success: true, tickets: userTickets[userId] });
+});
+
+
 app.post("/create-checkout-session", async (req, res) => {
   try {
     const session = await stripe.checkout.sessions.create({
@@ -75,27 +93,7 @@ app.post(
       return res.status(400).send(`Webhook Error: ${err.message}`);
     }
 
-    let userTickets = {};
 
-    app.get("/api/raffle-status", (req, res) => {
-      const userId = req.query.userId;
-      if (!userId)
-        return res.status(400).json({ error: "User ID is required" });
-
-      const tickets = userTickets[userId] || 0;
-      res.json({ tickets });
-    });
-
-    app.post("/api/raffle-entry", (req, res) => {
-      const { userId } = req.body;
-      if (!userId)
-        return res
-          .status(400)
-          .json({ success: false, error: "User ID missing" });
-
-      userTickets[userId] = (userTickets[userId] || 0) + 1;
-      res.json({ success: true, tickets: userTickets[userId] });
-    });
 
     switch (event.type) {
       case "checkout.session.completed":
