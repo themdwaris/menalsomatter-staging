@@ -18,7 +18,7 @@ const MainContent: React.FC = () => {
           onClick={async () => {
             
             
-            const res = await fetch("http://localhost:3000/create-checkout-session", {
+            const res = await fetch(`${import.meta.env.VITE_APP_BACKEND_URL}/create-checkout-session`, {
               method: "POST",
             });
             const data = await res.json();
