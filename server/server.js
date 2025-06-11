@@ -18,8 +18,11 @@ app.use(bodyParser.raw({ type: 'application/json' }));
 
 const CONNECTED_ACCOUNT_ID = 'acct_1RSCgTRhwk3BcY4W';
 
+app.get('/',async (req,res)=>{
+  return res.json({message:"Hello from backend"})
+})
 app.post('/create-checkout-session', async (req, res) => {
-  console.log("Hello from backend");
+  
   
   try {
     const session = await stripe.checkout.sessions.create({
