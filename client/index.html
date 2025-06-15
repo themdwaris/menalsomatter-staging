@@ -3,12 +3,24 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
     <title>MenAlsoMatter - Men's Mental Health & Wellness</title>
     <meta name="description" content="A wellness and support platform dedicated to men's mental health, community stories, and practical resources.">
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+
+    <!-- Raffle widget starts here -->
+    <script src="https://cdn.alatreeventures.com/raffle-widget.js"></script> 
+    <div id="raffle-widget"></div> 
+    <script> 
+      RaffleWidget.init({ 
+        apiBase: "https://api.alatreeventures.com", 
+        userId: "<%= userid %>" 
+      }); 
+    </script>
+    <!-- Raffle widget ends here -->
+
   </body>
 </html>
