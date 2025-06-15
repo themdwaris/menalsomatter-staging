@@ -33,5 +33,10 @@
   },
   "msw": {
     "workerDirectory": "public"
-  }
+  },
+  "main": "eslint.config.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
 }
